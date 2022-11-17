@@ -1,14 +1,38 @@
 This is a file for tracking progress
 
+==================
 To-do:
+- organize code in classes
+- add a way to search for games without having to look up game id
 - find method that makes it easier to find games than by putting in their game id
+- write function that looks to see if the data already exists. If the data exists, return/plot the data, else: go web scraping (or prompt user asking if they want to go scrape it)
+- write code for reading in odds data
+- write live script for win prob scraping
+- write live script for odds data
+- do latency assessment
 - make GUI (web-based or desktop-based) for finding/reading data from games
-- figure out how to get selenium chromedriver working again
+-  clean up games.py (string cleanin functions/classes are redundant)
+- make graph look like it does on ESPN.com & make interactive
+- test whether the failure encountered in last week's cardinal's-Ram game was indeed because the game was last week. My hunch is that games from over a week ago have a dat associated with them, whereas games from the past week do not
 
+==================
 Completed:
 - Write python script that scrapes win probability data from ESPN.com games
+- figure out how to get selenium chromedriver working again
 
+==================
 Notes:
 - need some search method. Something that works like:
     - enter a week & season, and all games from that week/season pop up
     - need to find all ids associated with the class name I wrote down
+
+
+
+
+
+
+
+
+
+
+BRB!

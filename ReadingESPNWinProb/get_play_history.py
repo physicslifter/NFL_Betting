@@ -6,6 +6,9 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import numpy as np
 import pdb
+from selenium.webdriver.chrome.service import Service
+
+
 
 '''
 This is the first of the scripts and proves that I can
@@ -14,32 +17,27 @@ move the cursor
 id = input("Enter the ID of the game you want to scrape: ")
 #save_name = "SEA_DET_2022"
 
-def find_home_and_away(gameID:str=id):
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option(
-        'excludeSwitches', 
-        ['enable-logging'])
-    driver = webdriver.Chrome(
-        executable_path='../chromedriver_win32/chromedriver', 
-        options = options)
+def find_home_and_away(gameID:str=id, driver = None):
+    if driver == None:
+        s = Service('../chromedriver_win32_107/chromedriver.exe')
+        driver = webdriver.Chrome(service=s)
     desired_http = 'https://www.espn.com/nfl/game/_/gameId/' + gameID
     driver.get(desired_http)
     away_path = "//*[@id='linescore']/tbody/tr[1]/td[1]"
     home_path = "//*[@id='linescore']/tbody/tr[2]/td[1]"
-    home = driver.find_element(By.XPATH, home_path)
+    home = driver.find_element(By.XPATH, home_path).text
     away = driver.find_element(By.XPATH, away_path)
-    print(f'home: {home.text} away: {away.text}')
+    print(f'home: {home} away: {away.text}')
     
-    return home.text, away.text
+    return home, away.text
 
 teams = find_home_and_away()
 options = webdriver.ChromeOptions()
 options.add_experimental_option(
     'excludeSwitches', 
     ['enable-logging'])
-driver = webdriver.Chrome(
-    executable_path='../chromedriver_win32/chromedriver', 
-    options = options)
+s = Service('../chromedriver_win32_107/chromedriver.exe')
+driver = webdriver.Chrome(service=s)
 url = 'https://www.espn.com/nfl/game/_/gameId/' + id
 driver.get(url)
 
@@ -65,8 +63,8 @@ def print_vals():
     print(f'Corrected win prob: {win_prob}')
     
 def get_date():
-    element = driver.find_element(By.XPATH, game_date_xpath)
-    date = element.text
+    #element = driver.find_element(By.XPATH, game_date_xpath)
+    date = driver.find_element(By.XPATH, game_date_xpath).text
     date = date.replace(" ", "").replace(",","")
     
     return date
