@@ -1,0 +1,14 @@
+This is a file for tracking progress
+
+To-do:
+- find method that makes it easier to find games than by putting in their game id
+- make GUI (web-based or desktop-based) for finding/reading data from games
+- figure out how to get selenium chromedriver working again
+
+Completed:
+- Write python script that scrapes win probability data from ESPN.com games
+
+Notes:
+- need some search method. Something that works like:
+    - enter a week & season, and all games from that week/season pop up
+    - need to find all ids associated with the class name I wrote down
