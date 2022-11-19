@@ -8,6 +8,11 @@ import time
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import datetime
+
+def check_data(csv_file:str):
+    a = pd.read_csv(csv_file)
+    return a.raw_time.values[-1] - a.raw_time.values[-2] >= 100
 
 def clean_datastring(string):
     at_colon = False  
@@ -52,7 +57,7 @@ def clean_time(string):
     minute_seconds = minutes_elapsed*60
     seconds_elapsed = 60 - second
     total_seconds_elapsed = quarter_seconds+minute_seconds+seconds_elapsed
-    return total_seconds_elapsed
+    return total_seconds_elapsed - 120
 
 class StringCleaner:
     '''
@@ -136,7 +141,7 @@ class Game:
         if favored_team == self.home:
             win_prob = 100 - float(percent.text[3:-1].replace(" ", ""))
         else:
-            win_prob = float(percent.text[4:-1].replace(" ", ""))
+            win_prob = float(percent.text[3:-1].replace(" ", ""))
         return play.text, percent.text, win_prob
 
     def go_to_plot(self):
@@ -189,9 +194,18 @@ class Game:
         return data
 
     def get_date(self):
-        date = self.d.driver.find_element(By.XPATH, self.game_date_xpath)
-        self.tight_date = date.text.replace(" ", "").replace(",","")
-        self.pretty_date = date.text
+        timestamp = self.d.driver.find_element(By.CLASS_NAME, "timestamp")
+        stamptext = timestamp.text
+        print(stamptext)
+        if stamptext[-1] == 'd':
+            num_days_ago = int(stamptext[0])
+            date = datetime.date.today() - datetime.timedelta(num_days_ago)
+            self.tight_date = date.strftime('%B%d%Y')
+            self.pretty_date = date.strftime('%B %d, %Y')
+        else:
+            date = self.d.driver.find_element(By.XPATH, self.game_date_xpath)
+            self.tight_date = date.text.replace(" ", "").replace(",","")
+            self.pretty_date = date.text
 
     def save_data(self):
         save_name = f'../Data/{self.home}_vs_{self.away}_{self.tight_date}.csv'
@@ -210,18 +224,66 @@ class Game:
                 plt.savefig(save_name)
             except:
                 print('WARNING: Plot not saved')
-        plt.show()
+        plt.close()
+        #plt.show()
+        #time.sleep(5)
+        #plt.close()
 
-    def get_play_history(self, plot:bool = True, save_name:str = ''):
-        desired_http = 'https://www.espn.com/nfl/game/_/gameId/' + str(self.ID)
-        self.d.get_http(desired_http)
-        self.home = self.d.driver.find_element(By.XPATH, self.home_path).text
-        self.away = self.d.driver.find_element(By.XPATH, self.away_path).text
-        self.go_to_plot()
-        self.find_first_play()
-        self.get_date()
-        self.actions.move_by_offset(-1,0).perform()
-        self.log_plays()
-        self.save_data()
-        if plot == True:
-            self.plot_results(save_name)
+    def get_play_history(self, plot:bool = True, save:bool = True):
+        success = True
+        complete = False
+        count = 0
+        while complete == False:
+            desired_http = 'https://www.espn.com/nfl/game/_/gameId/' + str(self.ID)
+            self.d.get_http(desired_http)
+            self.home = self.d.driver.find_element(By.XPATH, self.home_path).text
+            self.away = self.d.driver.find_element(By.XPATH, self.away_path).text
+            self.go_to_plot()
+            self.find_first_play()
+            self.get_date()
+            self.actions.move_by_offset(-1,0).perform()
+            self.log_plays()
+            self.save_data()
+            if plot == True:
+                save_name = f'../Plots/{self.home}_vs_{self.away}_{self.tight_date}.png'
+                self.plot_results(save_name)
+            self.d.driver.quit()
+            complete = check_data(f'../Data/{self.home}_vs_{self.away}_{self.tight_date}.csv')
+            count += 1
+            if complete == False and count == 5:
+                print('Failed to retrieve data')
+                complete = True
+                success = False
+        return success
+
+class GamesOfWeek:
+    def __init__(self, week, year):
+        self.week = week
+        self.year = year
+        self.d = DriverHandler()
+        self.week_url = f"https://www.espn.com/nfl/scoreboard/_/week/{week}/year/{year}/seasontype/2"
+    def get_IDs(self):
+        self.d.get_http(self.week_url)
+        elements = self.d.driver.find_elements(By.CLASS_NAME, "Scoreboard")
+        self.IDs = []
+        for element in elements:
+            self.IDs.append(element.get_attribute("id"))
+        self.d.driver.quit()
+        return self.IDs
+    def get_data(self, results_file = 'scrape_results.txt'):
+        results = []
+        for ID in self.IDs:
+            self.game = Game(int(ID))
+            try:
+                self.game.get_play_history()
+                results.append(1)
+            except:
+                results.append(0)
+        print(results)
+        with open (results_file, 'a+') as f:
+            f.write(str(results))
+            f.write("\n")
+
+
+    
+        

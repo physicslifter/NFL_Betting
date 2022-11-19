@@ -25,11 +25,11 @@ def find_home_and_away(gameID:str=id, driver = None):
     driver.get(desired_http)
     away_path = "//*[@id='linescore']/tbody/tr[1]/td[1]"
     home_path = "//*[@id='linescore']/tbody/tr[2]/td[1]"
-    home = driver.find_element(By.XPATH, home_path).text
+    home = driver.find_element(By.XPATH, home_path)
     away = driver.find_element(By.XPATH, away_path)
-    print(f'home: {home} away: {away.text}')
+    print(f'home: {home.text} away: {away.text}')
     
-    return home, away.text
+    return home.text, away.text
 
 teams = find_home_and_away()
 options = webdriver.ChromeOptions()

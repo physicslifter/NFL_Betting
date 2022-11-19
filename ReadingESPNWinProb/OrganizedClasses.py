@@ -5,8 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import numpy as np
-import pandas as pd
 import pdb
+from selenium.webdriver.chrome.service import Service
 
 def get_play_history(id:int):
     pass
@@ -16,13 +16,8 @@ class Game:
         self.id = str(game_ID)
         
     def get_play_history(self, save_name:str = ''):
-        options = webdriver.ChromeOptions()
-        options.add_experimental_option(
-            'excludeSwitches', 
-            ['enable-logging'])
-        driver = webdriver.Chrome(
-            executable_path='../chromedriver_win32/chromedriver', 
-            options = options)
+        s = Service('../chromedriver_win32_107/chromedriver.exe')
+        driver = webdriver.Chrome(service=s)
         url = "https://www.espn.com/nfl/game/_/gameId/" + self.id
         #pdb.set_trace()
         
