@@ -2,23 +2,39 @@ This is a file for tracking progress
 
 ==================
 To-do:
-- organize code in classes
-- add a way to search for games without having to look up game id
-- find method that makes it easier to find games than by putting in their game id
-- write function that looks to see if the data already exists. If the data exists, return/plot the data, else: go web scraping (or prompt user asking if they want to go scrape it)
+- troubleshoot problem with Raiders-Chargers game
+- check single season to ensure that all games are scraped and saved
+- set up script to read all data from all years
+- scrape data for all years going back to the 2016 season
+- build & finalize database in github repo
+- add data to places (share)
 - write code for reading in odds data
 - write live script for win prob scraping
 - write live script for odds data
-- do latency assessment
-- make GUI (web-based or desktop-based) for finding/reading data from games
--  clean up games.py (string cleanin functions/classes are redundant)
-- make graph look like it does on ESPN.com & make interactive
-- test whether the failure encountered in last week's cardinal's-Ram game was indeed because the game was last week. My hunch is that games from over a week ago have a dat associated with them, whereas games from the past week do not
+- do latency assessments
+- build a combined dataset
 
 ==================
 Completed:
 - Write python script that scrapes win probability data from ESPN.com games
 - figure out how to get selenium chromedriver working again
+- organize code in classes
+- add a way to search for games without having to look up game id
+- find each unique id that is associated with the class "Scoreboard bg-clr-white flex flex-auto jutify-between"
+- find method that makes it easier to find games than by putting in their game id
+- how to get the date for games that have taken place within the last week
+- test whether the failure encountered in last week's cardinal's-Ram game was indeed because the game was last week. My hunch is that games from over a week ago have a data associated with them, whereas games from the past week do not
+- troubleshoot data issues
+- write looop for (get data, if fail, try again n times)
+- write special handling case for teams w/ 2 letter abbreviations
+- troubleshoot problem with Rams-Bills game
+- fix date string formatting problem so that files save nicely
+- write code for handling an overtime scenario
+- troubleshoot failure problem with Cin-PIT week 1 game
+- check single week to ensure that all games are scraped and saved
+- write new function that works for checking whether the file is complete
+- set up repository strictly for NFL win probability data
+
 
 ==================
 Notes:
@@ -26,8 +42,13 @@ Notes:
     - enter a week & season, and all games from that week/season pop up
     - need to find all ids associated with the class name I wrote down
 
+- season type doesnt make a difference w/ respect to whether there is win probability data in the gamecast
+- win probability data begins for the 2016 season
+- "end fail" is when it gwets some data, but quits before the end, and the last bit of the graph is a straight line
+- datapoint fail is when there is a seemingly misaligned datapoint
 
-
+- Atlanta favord: win probabilities r correct, NO favored, error occurs
+- new hypothesis: error occurs from team name w 2 letters
 
 
 
